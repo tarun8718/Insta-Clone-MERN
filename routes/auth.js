@@ -29,7 +29,7 @@ router.post('/signup',(req,res)=>{
       if(savedUser){
         return res.status(422).json({error:"user already exists with that Roll No"})
       }
-      bcrypt.hash(password,12)
+      bcrypt.hash(password,0)
       .then(hashedpassword=>{
             const user = new User({
                 rno,
