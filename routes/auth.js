@@ -29,11 +29,11 @@ router.post('/signup',(req,res)=>{
       if(savedUser){
         return res.status(422).json({error:"user already exists with that Roll No"})
       }
-      bcrypt.hash(password,0)
-      .then(hashedpassword=>{
+      //bcrypt.hash(password,0)
+      //.then(hashedpassword=>{
             const user = new User({
                 rno,
-                password:hashedpassword,
+                password,
                 name,
                 pic
             })
@@ -51,7 +51,6 @@ router.post('/signup',(req,res)=>{
             .catch(err=>{
                 console.log(err)
             })
-      })
      
   })
   .catch(err=>{
@@ -70,21 +69,15 @@ router.post('/signin',(req,res)=>{
         if(!savedUser){
            return res.status(422).json({error:"Invalid Roll No or password"})
         }
-        bcrypt.compare(password,savedUser.password)
-        .then(doMatch=>{
-            if(doMatch){
-                // res.json({message:"successfully signed in"})
-               const token = jwt.sign({_id:savedUser._id},JWT_SECRET)
-               const {_id,name,rno,followers,following,pic} = savedUser
-               res.json({token,user:{_id,name,rno,followers,following,pic}})
-            }
-            else{
-                return res.status(422).json({error:"Invalid rno or password"})
-            }
-        })
-        .catch(err=>{
-            console.log(err)
-        })
+        if(password===savedUser.password)
+        {
+            const token = jwt.sign({_id:savedUser._id},JWT_SECRET)
+            const {_id,name,rno,followers,following,pic} = savedUser
+            res.json({token,user:{_id,name,rno,followers,following,pic}})
+        }
+        else{
+            return res.status(422).json({error:"Invalid rno or password"})
+        }
     })
 })
 
