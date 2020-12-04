@@ -3,8 +3,7 @@ import M from 'materialize-css'
 import {useHistory} from 'react-router-dom'
 const CretePost = ()=>{
     const history = useHistory()
-    const [title,setTitle] = useState("")
-    const [body,setBody] = useState("")
+    const [caption,setCaption] = useState("")
     const [image,setImage] = useState("")
     const [url,setUrl] = useState("")
     useEffect(()=>{
@@ -16,8 +15,7 @@ const CretePost = ()=>{
                 "Authorization":"Bearer "+localStorage.getItem("jwt")
             },
             body:JSON.stringify({
-                title,
-                body,
+                caption,
                 pic:url
             })
         }).then(res=>res.json())
@@ -68,16 +66,10 @@ const CretePost = ()=>{
        >
            <input 
            type="text"
-            placeholder="title"
-            value={title}
-            onChange={(e)=>setTitle(e.target.value)}
+            placeholder="Caption"
+            value={caption}
+            onChange={(e)=>setCaption(e.target.value)}
             />
-           <input
-            type="text"
-             placeholder="body"
-             value={body}
-            onChange={(e)=>setBody(e.target.value)}
-             />
            <div className="file-field input-field">
             <div className="btn #64b5f6 blue darken-1">
                 <span>Uplaod Image</span>

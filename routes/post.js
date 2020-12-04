@@ -7,8 +7,8 @@ const Post =  mongoose.model("Post")
 
 router.get('/allpost',requireLogin,(req,res)=>{
     Post.find()
-    .populate("postedBy","_id name")
-    .populate("comments.postedBy","_id name")
+    .populate("postedBy","_id name pic")
+    .populate("comments.postedBy","_id name pic")
     .sort('-createdAt')
     .then((posts)=>{
         res.json({posts})
@@ -22,8 +22,8 @@ router.get('/getsubpost',requireLogin,(req,res)=>{
 
     // if postedBy in following
     Post.find({postedBy:{$in:req.user.following}})
-    .populate("postedBy","_id name")
-    .populate("comments.postedBy","_id name")
+    .populate("postedBy","_id name pic")
+    .populate("comments.postedBy","_id name pic")
     .sort('-createdAt')
     .then(posts=>{
         res.json({posts})
@@ -34,14 +34,13 @@ router.get('/getsubpost',requireLogin,(req,res)=>{
 })
 
 router.post('/createpost',requireLogin,(req,res)=>{
-    const {title,body,pic} = req.body 
-    if(!title || !body || !pic){
+    const {caption,pic} = req.body 
+    if(!caption || !pic){
       return  res.status(422).json({error:"Plase add all the fields"})
     }
     req.user.password = undefined
     const post = new Post({
-        title,
-        body,
+        caption,
         photo:pic,
         postedBy:req.user
     })
@@ -55,7 +54,7 @@ router.post('/createpost',requireLogin,(req,res)=>{
 
 router.get('/mypost',requireLogin,(req,res)=>{
     Post.find({postedBy:req.user._id})
-    .populate("PostedBy","_id name")
+    .populate("PostedBy","_id name pic")
     .then(mypost=>{
         res.json({mypost})
     })
@@ -69,7 +68,9 @@ router.put('/like',requireLogin,(req,res)=>{
         $push:{likes:req.user._id}
     },{
         new:true
-    }).exec((err,result)=>{
+    }).populate("postedBy","_id name pic")
+    .populate("comments.postedBy","_id name pic")
+    .exec((err,result)=>{
         if(err){
             return res.status(422).json({error:err})
         }else{
@@ -77,12 +78,15 @@ router.put('/like',requireLogin,(req,res)=>{
         }
     })
 })
+
 router.put('/unlike',requireLogin,(req,res)=>{
     Post.findByIdAndUpdate(req.body.postId,{
         $pull:{likes:req.user._id}
     },{
         new:true
-    }).exec((err,result)=>{
+    }).populate("postedBy","_id name pic")
+    .populate("comments.postedBy","_id name pic")
+    .exec((err,result)=>{
         if(err){
             return res.status(422).json({error:err})
         }else{
@@ -102,8 +106,8 @@ router.put('/comment',requireLogin,(req,res)=>{
     },{
         new:true
     })
-    .populate("comments.postedBy","_id name")
-    .populate("postedBy","_id name")
+    .populate("comments.postedBy","_id name pic")
+    .populate("postedBy","_id name pic")
     .exec((err,result)=>{
         if(err){
             return res.status(422).json({error:err})

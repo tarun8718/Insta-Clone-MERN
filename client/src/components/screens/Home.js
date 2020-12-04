@@ -115,7 +115,11 @@ const Home  = ()=>{
                data.map(item=>{
                    return(
                        <div className="card home-card" key={item._id}>
-                            <h5 style={{padding:"5px"}}><Link to={item.postedBy._id !== state._id?"/profile/"+item.postedBy._id :"/profile"  }>{item.postedBy.name}</Link> {item.postedBy._id == state._id 
+                           
+                           <img style={{padding:"10px 10px", width:"80px",height:"80px",borderRadius:"40px", float:"left"}}
+                            src={item.postedBy.pic}
+                            />
+                            <h5 style={{padding:"30px 30px", margin :"0px"}}><Link to={item.postedBy._id !== state._id?"/profile/"+item.postedBy._id :"/profile"  }>{item.postedBy.name}</Link> {item.postedBy._id == state._id 
                             && <i className="material-icons" style={{
                                 float:"right"
                             }} 
@@ -127,22 +131,23 @@ const Home  = ()=>{
                                 <img src={item.photo}/>
                             </div>
                             <div className="card-content">
-                            <i className="material-icons" style={{color:"red"}}>favorite</i>
                             {item.likes.includes(state._id)
                             ? 
-                             <i className="material-icons"
+                             <i className="material-icons" style={{color:"red"}}
                                     onClick={()=>{unlikePost(item._id)}}
-                              >thumb_down</i>
+                              >favorite</i>
                             : 
-                            <i className="material-icons"
+                            <i className="material-icons" style={{color:"white", WebkitTextStrokeWidth:"1px",WebkitTextStrokeColor:"black"}}
                             onClick={()=>{likePost(item._id)}}
-                            >thumb_up</i>
+                            >favorite</i>
                             }
+                            <i className="material-icons" style={{padding:"5px"}}>message</i>
+                            <i className="material-icons">send</i>
+
                             
                            
                                 <h6>{item.likes.length} likes</h6>
-                                <h6>{item.title}</h6>
-                                <p>{item.body}</p>
+                                <h6>{item.caption}</h6>
                                 {
                                     item.comments.map(record=>{
                                         return(
